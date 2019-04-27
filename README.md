@@ -14,7 +14,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 git_repository(
     name = "java_assembly",
     remote = "https://github.com/zacharya19/bazel_java_assembly.git",
-    commit = "811d594341b3f240bf44add118deca2c5ef5bf77"
+    commit = "0214c62140bb48f1db41ab971bdcbf42235edc06"
 )
 
 load("@java_assembly//3rdparty:workspace.bzl", "maven_dependencies")
