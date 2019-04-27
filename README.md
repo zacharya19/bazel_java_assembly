@@ -16,6 +16,9 @@ git_repository(
     remote = "https://github.com/zacharya19/bazel_java_assembly.git",
     commit = "811d594341b3f240bf44add118deca2c5ef5bf77"
 )
+
+load("@java_assembly//3rdparty:workspace.bzl", "maven_dependencies")
+maven_dependencies()
 ```
 
 Add to your BUILD file:
