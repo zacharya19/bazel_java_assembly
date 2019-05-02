@@ -111,7 +111,7 @@ public class Main {
 
         try (JarCreator creator = new JarCreator(outputFilePath)) {
             for (String dep : dependencies) {
-                creator.addJarFile(dep);
+                creator.mergeJarFile(dep);
             }
         }
     }

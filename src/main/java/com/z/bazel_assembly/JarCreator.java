@@ -22,7 +22,7 @@ class JarCreator implements AutoCloseable {
         outputJar = new JarOutputStream(outputFile);
     }
 
-    public void addJarFile(String path) throws IOException {
+    public void mergeJarFile(String path) throws IOException {
         JarFile jar = new JarFile(new File(path));
         Enumeration<JarEntry> enumOfJar = jar.entries();
 
