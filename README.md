@@ -28,6 +28,7 @@ java_assembly_jar(
     name = "jar",
     srcs = glob(["src/main/**/*.java"]),
     deps = deps,
+    main_class = "XXX.XXX.XXX"  # optional, if you want the tool to write it in the manifest file.
 )
 ```
 
