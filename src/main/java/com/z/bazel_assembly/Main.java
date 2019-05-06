@@ -76,6 +76,9 @@ public class Main {
         Option include = new Option("i", "include", true, "must include jars");
         options.addOption(include);
 
+        Option mainClass = new Option("m", "main_class", true, "main class name");
+        options.addOption(mainClass);
+
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
 
@@ -98,6 +101,7 @@ public class Main {
         String jdepsFile = inputFilePath.replace(JAR_SUFFIX, JDEPS_SUFFIX);
         String outputFilePath = cmd.getOptionValue("output");
         String includeList[] = cmd.getOptionValues("include");
+        String mainClass = cmd.getOptionValue("main_class");
 
         String depList[] = cmd.getOptionValues("deps");
         Map<String, String> depJars = new HashMap<>();
@@ -110,6 +114,8 @@ public class Main {
         dependencies.add(inputFilePath);
 
         try (JarCreator creator = new JarCreator(outputFilePath)) {
+            creator.addManifest(mainClass);
+
             for (String dep : dependencies) {
                 creator.mergeJarFile(dep);
             }

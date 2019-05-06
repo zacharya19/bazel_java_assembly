@@ -19,6 +19,9 @@ def _assembly_jar_impl(ctx):
     inputs.append(ctx.file.jar)
     inputs.append(jar[JavaInfo].outputs.jdeps)
 
+    if ctx.attr.main_class != "":
+        args.extend(["--main_class", ctx.attr.main_class])
+
     ctx.action(
         inputs=inputs,
         outputs=[ctx.outputs.jar],
@@ -43,7 +46,8 @@ assembly_jar = rule(
         ),
         "deps": attr.label_list(
             providers = [JavaInfo, OutputGroupInfo],
-        )
+        ),
+        "main_class": attr.string()
     },
     outputs = {
         "jar": "%{name}.jar"
@@ -51,7 +55,7 @@ assembly_jar = rule(
 )
 
 
-def java_assembly_jar(name, deps = [], **kwargs):
+def java_assembly_jar(name, deps = [], main_class = None, **kwargs):
     native.java_library(
         name = name,
         deps = deps,
@@ -60,5 +64,6 @@ def java_assembly_jar(name, deps = [], **kwargs):
     assembly_jar(
         name = name + "_assembly",
         jar = ":" + name,
-        deps = deps
+        deps = deps,
+        main_class = main_class
     )

@@ -24,6 +24,7 @@ java_binary(
 load("//:assembly.bzl", "java_assembly_jar")
 java_assembly_jar(
     name = "test",
+    main_class = "com.z.bazel_assembly.Main",
     srcs = glob(["src/main/java/com/z/bazel_assembly/*.java"]),
     deps = [
         ":deps_java_proto",

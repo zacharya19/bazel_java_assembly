@@ -1,5 +1,7 @@
 package com.z.bazel_assembly;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,9 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 import java.util.zip.ZipException;
 
 class JarCreator implements AutoCloseable {
@@ -33,11 +37,36 @@ class JarCreator implements AutoCloseable {
             } catch (ZipException e) {
                 continue;
             }
-            
+
             if (!entry.isDirectory()) {
                 copy(jar.getInputStream(entry), outputJar);
             }
             outputJar.closeEntry();
+        }
+    }
+
+    public void addFile(String path, InputStream is) throws IOException{
+        JarEntry entry = new JarEntry(path);
+        outputJar.putNextEntry(entry);
+        copy(is, outputJar);
+    }
+
+    public void addManifest(String mainClass) throws IOException {
+        Manifest manifest = new Manifest();
+        Attributes attributes = manifest.getMainAttributes();
+
+        attributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+        attributes.put(new Attributes.Name("Created-By"), "blaze_java_assembly");
+
+        if (mainClass != null)
+            attributes.put(Attributes.Name.MAIN_CLASS, mainClass);
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+            manifest.write(out);
+
+            InputStream in = new ByteArrayInputStream(out.toByteArray());
+            addFile(JarFile.MANIFEST_NAME, in);
+            in.close();
         }
     }
 
