@@ -14,7 +14,7 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 git_repository(
     name = "java_assembly",
     remote = "https://github.com/zacharya19/bazel_java_assembly.git",
-    commit = "0214c62140bb48f1db41ab971bdcbf42235edc06"
+    commit = "30546e90003b272ae2d9252d3854e4ad6d0c3b16"
 )
 
 load("@java_assembly//3rdparty:workspace.bzl", "maven_dependencies")
@@ -39,3 +39,4 @@ The `java_assembly_jar` rule will create a `java_library` named jar with all the
 1. Extend the tool to build java WAR files.
 2. Write tests.
 3. Add an examples.
+4. Better exception handling.
