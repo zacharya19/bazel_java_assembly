@@ -23,11 +23,11 @@ def _assembly_jar_impl(ctx):
         args.extend(["--main_class", ctx.attr.main_class])
 
     ctx.action(
-        inputs=inputs,
-        outputs=[ctx.outputs.jar],
-        executable=ctx.executable._assembly_jar,
-        arguments=args)
-
+        inputs = inputs,
+        outputs = [ctx.outputs.jar],
+        executable = ctx.executable._assembly_jar,
+        arguments = args,
+    )
 
 assembly_jar = rule(
     _assembly_jar_impl,
@@ -36,24 +36,23 @@ assembly_jar = rule(
             allow_files = [".jar"],
             providers = [JavaInfo, OutputGroupInfo],
             mandatory = True,
-            single_file = True
+            single_file = True,
         ),
         "_assembly_jar": attr.label(
-            default=Label("//:assembly"),
-            allow_files=True,
-            cfg="host",
-            executable=True
+            default = Label("//:assembly"),
+            allow_files = True,
+            cfg = "host",
+            executable = True,
         ),
         "deps": attr.label_list(
             providers = [JavaInfo, OutputGroupInfo],
         ),
-        "main_class": attr.string()
+        "main_class": attr.string(),
     },
     outputs = {
-        "jar": "%{name}.jar"
-    }
+        "jar": "%{name}.jar",
+    },
 )
-
 
 def java_assembly_jar(name, deps = [], main_class = None, **kwargs):
     native.java_library(
@@ -65,5 +64,5 @@ def java_assembly_jar(name, deps = [], main_class = None, **kwargs):
         name = name + "_assembly",
         jar = ":" + name,
         deps = deps,
-        main_class = main_class
+        main_class = main_class,
     )

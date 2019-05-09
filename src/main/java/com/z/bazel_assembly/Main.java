@@ -12,11 +12,17 @@ import java.util.Map;
 import com.google.devtools.build.lib.view.proto.Deps.Dependencies;
 import com.google.devtools.build.lib.view.proto.Deps.Dependency;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.ParseException;
 
 /**
- * A java util for creating a singlejar in bazel.
- * The tools will include deps only if it's a non transitive or it's used by the input jar.
+ * A java util for creating a singlejar in bazel. The tools will include deps
+ * only if it's a non transitive or it's used by the input jar.
  *
  * @author zacharya19@gmail.com
  */
@@ -111,14 +117,7 @@ public class Main {
         }
 
         List<String> dependencies = extractDeps(jdepsFile, includeList, depJars);
-        dependencies.add(inputFilePath);
-
-        try (JarCreator creator = new JarCreator(outputFilePath)) {
-            creator.addManifest(mainClass);
-
-            for (String dep : dependencies) {
-                creator.mergeJarFile(dep);
-            }
-        }
+        Output out = new Output();
+        out.build(inputFilePath, outputFilePath, mainClass, dependencies);
     }
 }

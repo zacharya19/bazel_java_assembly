@@ -3,11 +3,14 @@ package com.z.bazel_assembly;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -15,6 +18,10 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.zip.ZipException;
+
+enum Action {
+    MERGE, COPY
+}
 
 class JarCreator implements AutoCloseable {
     private FileOutputStream outputFile;
@@ -27,13 +34,30 @@ class JarCreator implements AutoCloseable {
     }
 
     public void mergeJarFile(String path) throws IOException {
+        mergeJarFile("", path);
+    }
+
+    public void addFile(String basepath, String path, Action action) throws IOException {
+        if (action == Action.MERGE)
+            mergeJarFile(basepath, path);
+        else {
+            File f = new File(path);
+            Path entryPath = Paths.get(basepath, f.getName());
+            copyFile(entryPath.toString(), new FileInputStream(path));
+        }
+    }
+
+    private void mergeJarFile(String basepath, String path) throws IOException {
         JarFile jar = new JarFile(new File(path));
         Enumeration<JarEntry> enumOfJar = jar.entries();
 
         while (enumOfJar.hasMoreElements()) {
             JarEntry entry = enumOfJar.nextElement();
+            Path entryPath = Paths.get(basepath, entry.getName());
+            JarEntry finalEntry = new JarEntry(entryPath.toString());
+
             try {
-                outputJar.putNextEntry(entry);
+                outputJar.putNextEntry(finalEntry);
             } catch (ZipException e) {
                 continue;
             }
@@ -45,9 +69,15 @@ class JarCreator implements AutoCloseable {
         }
     }
 
-    public void addFile(String path, InputStream is) throws IOException{
+    private void copyFile(String path, InputStream is) throws IOException {
         JarEntry entry = new JarEntry(path);
-        outputJar.putNextEntry(entry);
+
+        try {
+            outputJar.putNextEntry(entry);
+        } catch (ZipException e) {
+            return;
+        }
+
         copy(is, outputJar);
     }
 
@@ -65,7 +95,7 @@ class JarCreator implements AutoCloseable {
             manifest.write(out);
 
             InputStream in = new ByteArrayInputStream(out.toByteArray());
-            addFile(JarFile.MANIFEST_NAME, in);
+            copyFile(JarFile.MANIFEST_NAME, in);
             in.close();
         }
     }

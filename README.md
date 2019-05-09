@@ -37,6 +37,7 @@ Run `bazel build :jar_assembly`.
 The `java_assembly_jar` rule will create a `java_library` named jar with all the args, and an assembly jar named `jar_assembly`, so you can build both.
 
 ## TODO
+
 1. Extend the tool to build java WAR files.
 2. Write tests.
 3. Add an examples.
