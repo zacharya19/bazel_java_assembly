@@ -33,10 +33,9 @@ assembly_jar = rule(
     _assembly_jar_impl,
     attrs = {
         "jar": attr.label(
-            allow_files = [".jar"],
+            allow_single_file = [".jar"],
             providers = [JavaInfo, OutputGroupInfo],
             mandatory = True,
-            allow_single_file = True,
         ),
         "_assembly_jar": attr.label(
             default = Label("//:assembly"),
